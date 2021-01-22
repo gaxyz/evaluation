@@ -1,17 +1,17 @@
 process PREPROCESS {
 
-    publishDir "${params.outdir}/genotypes"   , pattern:"genotypes_*" , mode: "copy"
-
+    publishDir "${params.outdir}/${params.scenario}-s${params.scoef}-m${params.mprop}-cond${params.conditioned_frequency}-${params.sampling_scheme}-${params.ne_variation}"   , pattern:"genotypes_*" , mode: "copy"
+    cpus 1
     scratch true
                                                                                
     input:                                                                      
-        tuple val(rep_id), file(vcfs), file(m2_status)                          
+        tuple val(rep_id), file(vcfs)
     output:                                                                     
         tuple val(rep_id), file("genotypes_${rep_id}.bed"), file("genotypes_${rep_id}.fam"),file("genotypes_${rep_id}.bim")
         tuple val(rep_id), file("parameters_${rep_id}.csv")                      
                                                                                 
-    when:                                                                       
-        m2_status.name == "M2_ESTABLISHED"                                      
+   
+    
     """                                                                         
     merge-vcf --outfile genotypes_${rep_id}.vcf
     plink --vcf genotypes_${rep_id}.vcf --id-delim : --make-bed --out genotypes_${rep_id} 
@@ -23,7 +23,6 @@ process PREPROCESS {
 
     generate_parameter_file.py \
                     --replicate ${rep_id} \
-                    --neutral ${params.neutral}       \
                     --s ${params.scoef} \
                     --m ${params.mprop} \
                     --cond_freq ${params.conditioned_frequency} \

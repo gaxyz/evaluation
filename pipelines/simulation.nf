@@ -9,7 +9,6 @@ include {PREPROCESS} from "../modules/wrangling"
 
 /// Read config file parameters                                                 
 replicates = params.replicates              /// how many simulation replicates  
-neutral = params.neutral                    /// Is simulation neutral           
 scenario = params.scenario                  /// String for scenario name for data processing purposes
 scoef=params.scoef                          /// Selection coefficient
 mprop=params.mprop                          /// Admixture proportion
@@ -34,8 +33,8 @@ rep_id = Channel.from(1..replicates)
 // SIMULATION-------------------                                                
                                                                                 
 SIMULATE( slim_script, rep_id  )                                                
-vcf = SIMULATE.out[0]                                                           
-freq_file = SIMULATE.out[1]  
+vcf = SIMULATE.out                                                           
+
 
 // PREPROCESS
 
