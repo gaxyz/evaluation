@@ -9,3 +9,4 @@ scenarios/images
 *_files/
 *_cache/
 .Rhistory
+*.swp
