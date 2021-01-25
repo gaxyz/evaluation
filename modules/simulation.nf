@@ -5,14 +5,14 @@ process SIMULATE{
     scratch true                                                            
     input:                                                                      
         file(slim_script)                                                       
-        val(rep_id)                                                             
+        tuple val(rep_id), val(s), val(m)                                                             
     output:                                                                     
-        tuple val(rep_id) , file("*.vcf")                         
+        tuple val(rep_id), val(s), val(m) , file("*.vcf")                         
         
                                                                                 
     """                                                                         
-    slim -d s=${params.scoef} \
-        -d m=${params.mprop} \
+    slim -d s=${s} \
+        -d m=${m} \
         -d condfreq=${params.conditioned_frequency} \
         -d rep_id=${rep_id} \
         -d N=${params.N} \

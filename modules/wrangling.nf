@@ -1,11 +1,11 @@
 process PREPROCESS {
 
-    publishDir "${params.outdir}/${params.scenario}-s${params.scoef}-m${params.mprop}-cond${params.conditioned_frequency}-${params.sampling_scheme}-${params.ne_variation}"   , pattern:"genotypes_*" , mode: "copy"
+    publishDir "${params.outdir}/${params.scenario}-s${s}-m${m}-cond${params.conditioned_frequency}-${params.sampling_scheme}-${params.ne_variation}"   , pattern:"genotypes_*" , mode: "copy"
     cpus 1
     scratch true
                                                                                
     input:                                                                      
-        tuple val(rep_id), file(vcfs)
+        tuple val(rep_id), val(s), val(m), file(vcfs)
     output:                                                                     
         tuple val(rep_id), file("genotypes_${rep_id}.bed"), file("genotypes_${rep_id}.fam"),file("genotypes_${rep_id}.bim")
         tuple val(rep_id), file("parameters_${rep_id}.csv")                      
@@ -23,8 +23,8 @@ process PREPROCESS {
 
     generate_parameter_file.py \
                     --replicate ${rep_id} \
-                    --s ${params.scoef} \
-                    --m ${params.mprop} \
+                    --s ${s} \
+                    --m ${m} \
                     --cond_freq ${params.conditioned_frequency} \
                     --N ${params.N} \
                     --sample_size ${params.sample_size} \

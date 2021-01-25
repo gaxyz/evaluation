@@ -27,13 +27,18 @@ slim_script = file(params.slim_script)      /// Slim script for simulation
 //////////////////////////////////                                              
                                                                                 
                                                                                 
-// Generate replicate channels                                                  
-                                                                                
+// Generate replicate channels                                                        
 rep_id = Channel.from(1..replicates)
+// Merge with other parameters
+s = Channel.fromList( params.scoef )
+m = Channel.fromList( params.mprop )
+
+pars = rep_id.combine(s).combine(m)
+
 
 // SIMULATION-------------------                                                
                                                                                 
-SIMULATE( slim_script, rep_id  )                                                
+SIMULATE( slim_script, pars  )                                                
 vcf = SIMULATE.out                                                           
 
 
