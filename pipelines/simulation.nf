@@ -15,7 +15,8 @@ mprop=params.mprop                          /// Admixture proportion
 conditioned_frequency=params.conditioned_frequency                       /// Conditioned m2 frquency
 sampling_scheme=params.sampling_scheme      /// Sampling scheme
 ne_variation=params.ne_variation            /// Ne variation (possible bottlenecks)
-
+N=params.N                                  /// Individual population size Ne=2*N
+sample_size=params.sample_size              /// Final sampling size (per population)
 
 
 outdir = params.outdir                      /// Output directory name           

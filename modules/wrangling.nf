@@ -26,6 +26,8 @@ process PREPROCESS {
                     --s ${params.scoef} \
                     --m ${params.mprop} \
                     --cond_freq ${params.conditioned_frequency} \
+                    --N ${params.N} \
+                    --sample_size ${params.sample_size} \
                     --sampling ${params.sampling_scheme} \
                     --ne_variation ${params.ne_variation} \
                     --out parameters_${rep_id}.csv

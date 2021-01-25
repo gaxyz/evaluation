@@ -11,10 +11,12 @@ process SIMULATE{
         
                                                                                 
     """                                                                         
-    slim -d s=$params.scoef \
+    slim -d s=${params.scoef} \
         -d m=${params.mprop} \
         -d condfreq=${params.conditioned_frequency} \
         -d rep_id=${rep_id} \
+        -d N=${params.N} \
+        -d sample_size=${params.sample_size} \
         ${slim_script}          
     """                                                                         
                                                                                 
