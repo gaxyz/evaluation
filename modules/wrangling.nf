@@ -1,6 +1,7 @@
 process PREPROCESS {
 
-    publishDir "${params.outdir}/${params.scenario}-s${s}-m${m}-cond${params.conditioned_frequency}-${params.sampling_scheme}-${params.ne_variation}"   , pattern:"genotypes_*" , mode: "copy"
+    publishDir "${params.outdir}/${params.scenario}-s${s}-m${m}-cond${params.conditioned_frequency}-${params.sampling_scheme}-${params.ne_variation}"   , pattern:"genotypes_*" , mode: "move"
+    publishDir "${params.outdir}/${params.scenario}-s${s}-m${m}-cond${params.conditioned_frequency}-${params.sampling_scheme}-${params.ne_variation}"   , pattern:"*.csv" , mode: "move"
     cpus 1
     scratch true
                                                                                
@@ -35,3 +36,76 @@ process PREPROCESS {
     """    
 
 }
+
+
+process AGGREGATE{                                                              
+                                                                                
+    publishDir "$params.outdir", mode: "move"                                   
+                                                                                
+                                                                                
+    input:                                                                      
+        file(empirical)                                                          
+        file(covariance)                                                        
+        file(treemix)                                                           
+
+                                                                                
+    output:                                                                     
+        file("*.tab")                                                           
+                                                                                
+                                                                                
+    """                                                                         
+    aggregate.R ${params.scenario}                                              
+    """                                                                         
+                                                                                
+}                                                                               
+
+
+process TREEMIX_INPUT {                                                         
+                                                                                
+    scratch true                                                                
+                                                                                
+    input:                                                                      
+        tuple val(scenario), val(rep_id), file(bed), file(bim), file(fam)                                            
+    output:                                                                     
+        tuple val(scenario), val(rep_id), file("*.counts.gz")                                  
+                                                                                
+                                                                                
+                                                                                
+    """                                                                          
+    plink --bfile genotypes_${rep_id} --indep-pairwise 100 50 0.1 -out ld       
+    plink --bfile genotypes_${rep_id} --extract ld.prune.in --make-bed --out genotypes_${rep_id}_ldpruned
+    plink --bfile genotypes_${rep_id}_ldpruned --freq --family --out genotypes_${rep_id}
+    prepare-treemix.py genotypes_${rep_id}.frq.strat genotypes_${rep_id}.counts.gz 
+    """                                                                                                                                                     
+}      
+
+process MAF_FILTER {                                                            
+                                                                                
+    cpus 1                                                
+    scratch true                      
+                                                                                
+    input:                                                                      
+        tuple val(scenario) , val(rep_id), file(bed), file(bim), file(fam)                      
+                                                                                
+    output:                                                                     
+        tuple val(scenario), val(rep_id), file("genotypes_${rep_id}.bed"), file("genotypes_${rep_id}.bim"),file("genotypes_${rep_id}.fam")
+                                                                                
+                                                                                
+    """                                                                         
+    mv genotypes_${rep_id}.bed geno.bed                                         
+    mv genotypes_${rep_id}.fam geno.fam                                         
+    mv genotypes_${rep_id}.bim geno.bim                                         
+                                                                                
+    plink --bfile geno --maf 0.1 --nonfounders --make-bed --out genotypes_${rep_id}
+    """                                                                         
+                                                                                
+}                                                                               
+    
+
+
+
+
+
+
+
+ 
