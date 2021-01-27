@@ -1,6 +1,6 @@
 process KINSHIP_HAPFLK{                                                       
-    publishDir "${params.ourdir}/${scenario}/"                                                                         
-    scratch true                                                                
+    publishDir "${params.outdir}/${scenario}/"                                                                         
+
                                                                                 
     cpus 5                                                                      
                                                                                 
@@ -23,8 +23,8 @@ process KINSHIP_HAPFLK{
 
 
 process EMPIRICAL_HAPFLK {                                                     
-    publishDir "${params.ourdir}/${scenario}/"                                           
-    scratch true                                                                
+    publishDir "${params.outdir}/${scenario}/"                                           
+
                                                                                 
     cpus 5                                                                      
                                                                                 
@@ -54,8 +54,8 @@ process EMPIRICAL_HAPFLK {
 
 
 process TREEMIX_HAPFLK {                                                        
-    publishDir "${params.ourdir}/${scenario}/"                                                                                                             
-    scratch true                                                                
+    publishDir "${params.outdir}/${scenario}/"                                                                                                             
+
                                                                                 
     cpus 5                                                                      
                                                                                 

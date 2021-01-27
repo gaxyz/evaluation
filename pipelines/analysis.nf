@@ -6,7 +6,7 @@ workflow {
 ////////////////////////////////////                                            
 // Include modules       
 include {KINSHIP_HAPFLK; EMPIRICAL_HAPFLK; TREEMIX_HAPFLK; TREEMIX} from "../modules/analysis"
-include {TREEMIX_INPUT} from "../modules/wrangling"
+include {TREEMIX_INPUT; MAF_FILTER } from "../modules/wrangling"
 
 /// Read config file parameters    
 data_dir=params.data_dir                            /// data folder                                             
@@ -23,13 +23,13 @@ bootstrap=params.bootstrap                  /// bootstrap replicates for treemix
 /// Read input files and folders
 
 data = Channel                                                                         
-        .fromFilePairs("./${data_dir}/genotypes_*.{bed,bim,fam}", size: 3, flat: true )       
+        .fromFilePairs("./${data_dir}/*/genotypes_*.{bed,bim,fam}", size: 3, flat: true )       
         .map { bfiles ->                                                            
             def scenario = bfiles.get(1).getParent().toString().tokenize('/').last()
             def rep_id = bfiles.get(0).tokenize("_").last()                         
             return   tuple( scenario, rep_id, bfiles ).flatten()                                           
         }                                                                          
-        .view()     
+     
 
 /// MAF filter
 MAF_FILTER( data )
@@ -45,24 +45,13 @@ KINSHIP_HAPFLK(MAF_FILTER.out)
 /// Compute hapFLK using theoretical covariance matrix                          
 // Covariance hapFLK                                                            
 /// Compute hapFLK using estimated covariance matrix as kinship                 
-COVARIANCE_HAPFLK( MAF_FILTER.out )                                             
+EMPIRICAL_HAPFLK( MAF_FILTER.out )                                             
 // Treemix covariance                                                           
 /// Compute hapFLK using treemix estimated covariance matrix                    
-treemix_in = MAF_FILTER.out.join(TREEMIX.out, remainder:true, by =[0,1] )                                                                       
-TREEMIX_HAPFLK( treemix_in )                                                    
+treemix_in = MAF_FILTER.out.join(TREEMIX.out, remainder:true, by: [0,1] )                                                                       
+TREEMIX_HAPFLK( treemix_in )                         
                                                                                 
                                                                                 
-// AGGREGATE--------------------------------------------                        
-// Aggregate results                                                            
-/// Aggregate simulation and hapflk results into dataframes for data analysis   
-                                                                                
-///AGGREGATE(  EMPIRICAL_HAPFLK.out.collect(),                                      
-///            COVARIANCE_HAPFLK.out.collect(),                                    
-///            TREEMIX_HAPFLK.out.collect(),   
-///            freq_file.collect() )                                               
-                                                                                
-                                                                                
-                                                                                
-}                                                                               
+}                                                                       
 
 

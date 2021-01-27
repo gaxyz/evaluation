@@ -3,7 +3,7 @@ nextflow.preview.dsl=2
 workflow {                                                                      
                    
 include {SIMULATE} from "../modules/simulation"
-include {PREPROCESS} from "../modules/wrangling"
+include {PREPROCESS; COLLECT_PARAMETERS} from "../modules/wrangling"
 
 
 
@@ -36,15 +36,18 @@ m = Channel.fromList( params.mprop )
 pars = rep_id.combine(s).combine(m)
 
 
-// SIMULATION-------------------                                                
-                                                                                
+// SIMULATION-------------------                                                                               
 SIMULATE( slim_script, pars  )                                                
-vcf = SIMULATE.out                                                           
-
+vcf = SIMULATE.out                                                         
 
 // PREPROCESS
 
 PREPROCESS( vcf ) 
+parameter_data = PREPROCESS.out[1]
+
+// COLLECT PARAMETER DATA
+
+COLLECT_PARAMETERS( parameter_data.collect() )
 
 
 

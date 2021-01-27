@@ -22,7 +22,7 @@ process PREPROCESS {
                                                                                 
     plink --bfile geno --maf 0.1 --nonfounders --make-bed --out genotypes_${rep_id}    
 
-    generate_parameter_file.py \
+    generate-parameter-file.py \
                     --replicate ${rep_id} \
                     --s ${s} \
                     --m ${m} \
@@ -37,6 +37,23 @@ process PREPROCESS {
 
 }
 
+
+process COLLECT_PARAMETERS {
+
+    publishDir "$params.outdir", mode: "move"
+
+    input:
+        file(table)
+
+    output:
+        file("parameters.csv")
+
+    """
+    collect-parameters.py --out parameters.csv --extension .csv
+    """
+        
+
+}
 
 process AGGREGATE{                                                              
                                                                                 
@@ -65,7 +82,7 @@ process TREEMIX_INPUT {
     scratch true                                                                
                                                                                 
     input:                                                                      
-        tuple val(scenario), val(rep_id), file(bed), file(bim), file(fam)                                            
+        tuple val(scenario), val(rep_id),val(basename), file(bed), file(bim), file(fam)                                            
     output:                                                                     
         tuple val(scenario), val(rep_id), file("*.counts.gz")                                  
                                                                                 
@@ -85,7 +102,7 @@ process MAF_FILTER {
     scratch true                      
                                                                                 
     input:                                                                      
-        tuple val(scenario) , val(rep_id), file(bed), file(bim), file(fam)                      
+        tuple val(scenario) , val(rep_id), val(basename), file(bed), file(bim), file(fam)                      
                                                                                 
     output:                                                                     
         tuple val(scenario), val(rep_id), file("genotypes_${rep_id}.bed"), file("genotypes_${rep_id}.bim"),file("genotypes_${rep_id}.fam")

@@ -29,6 +29,6 @@ data = [args.replicate,
 
 with open( outfile, 'w' ) as handle:
 
-    handle.write(header+'\n')
+   #handle.write(header+'\n')
     handle.write(','.join(data)+'\n')
 
