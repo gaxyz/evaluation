@@ -1,7 +1,6 @@
 process PREPROCESS {
 
-    publishDir "${params.outdir}/${params.scenario}-s${s}-m${m}-cond${params.conditioned_frequency}-${params.sampling_scheme}-${params.ne_variation}"   , pattern:"genotypes_*" , mode: "move"
-    publishDir "${params.outdir}/${params.scenario}-s${s}-m${m}-cond${params.conditioned_frequency}-${params.sampling_scheme}-${params.ne_variation}"   , pattern:"*.csv" , mode: "move"
+    publishDir "${params.outdir}/${params.scenario}-s${s}-m${m}-cond${params.conditioned_frequency}-${params.sampling_scheme}-${params.ne_variation}"   , pattern:"genotypes_*" , mode: "move" 
     cpus 1
     scratch true
                                                                                
@@ -9,7 +8,7 @@ process PREPROCESS {
         tuple val(rep_id), val(s), val(m), file(vcfs)
     output:                                                                     
         tuple val(rep_id), file("genotypes_${rep_id}.bed"), file("genotypes_${rep_id}.fam"),file("genotypes_${rep_id}.bim")
-        tuple val(rep_id), file("parameters_${rep_id}.csv")                      
+        tuple val(rep_id), file("parameters_${rep_id}_${m}_${s}.csv")                      
                                                                                 
    
     
@@ -31,7 +30,7 @@ process PREPROCESS {
                     --sample_size ${params.sample_size} \
                     --sampling ${params.sampling_scheme} \
                     --ne_variation ${params.ne_variation} \
-                    --out parameters_${rep_id}.csv
+                    --out parameters_${rep_id}_${m}_${s}.csv
                                             
     """    
 
@@ -54,6 +53,8 @@ process COLLECT_PARAMETERS {
         
 
 }
+
+
 
 process AGGREGATE{                                                              
                                                                                 
@@ -86,8 +87,7 @@ process TREEMIX_INPUT {
     output:                                                                     
         tuple val(scenario), val(rep_id), file("*.counts.gz")                                  
                                                                                 
-                                                                                
-                                                                                
+                                                                                                                                                                
     """                                                                          
     plink --bfile genotypes_${rep_id} --indep-pairwise 100 50 0.1 -out ld       
     plink --bfile genotypes_${rep_id} --extract ld.prune.in --make-bed --out genotypes_${rep_id}_ldpruned

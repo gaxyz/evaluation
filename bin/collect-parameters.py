@@ -4,7 +4,7 @@ import glob
 
 parser = argparse.ArgumentParser(description="Collect simulation parameters into single file.")
 parser.add_argument("--out", type=str, required=True)
-parser.add_argumnet("--extension", type=str, required=True)
+parser.add_argument("--extension", type=str, required=True)
 
 
 args = parser.parse_args()
