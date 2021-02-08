@@ -69,7 +69,7 @@ process TREEMIX_HAPFLK {
     hapflk --ncpu ${task.cpus} \
             --reynolds-snps ${params.reynold_snps} \
             --bfile genotypes_${rep_id} \
-            --prefix treemix_calibration_${rep_id} \
+            --prefix treemix_${rep_id} \
             --outgroup p1 \
             -K ${params.K} \
             --nfit ${params.nfit} \

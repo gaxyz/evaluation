@@ -1,9 +1,6 @@
+complex
 test
 test1
-hierarchical_simple
-hierarchical_complex
-admixture_simple
-admixture_complex
 analysis/past_calibrations
 scenarios/images
 *.html
