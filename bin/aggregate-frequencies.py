@@ -20,5 +20,4 @@ for i, f in enumerate(mutfiles):
 
 
 (final
-    .set_index("generation")
     .to_csv(args.outfile, sep=" ", index_label="generation", na_rep="NA"))

@@ -1,8 +1,10 @@
 process SIMULATE{                                                               
-                                                                                
+                                       
+
+    publishDir "${params.outdir}/${params.scenario}-s${s}-m${m}-cond${params.conditioned_frequency}-${params.sampling_scheme}-${params.ne_variation}"   , pattern:"frequencies_*.mut" , mode: "move"                                         
                                                                                 
     cpus 1          
-    scratch true                                                            
+
     input:                                                                      
         file(slim_script)                                                       
         tuple val(rep_id), val(s), val(m)                                                             
@@ -17,7 +19,9 @@ process SIMULATE{
         -d rep_id=${rep_id} \
         -d N=${params.N} \
         -d sample_size=${params.sample_size} \
-        ${slim_script}          
+        ${slim_script}
+    
+    aggregate-frequencies.py . frequencies_${rep_id}.mut         
     """                                                                         
                                                                                 
 }                                                                               

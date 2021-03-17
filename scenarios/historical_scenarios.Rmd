@@ -1,0 +1,107 @@
+---
+title: "Historical Scenarios"
+date: "`r Sys.Date()`"
+output:
+  bookdown::html_document2:
+    fig_caption: yes
+---
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+knitr::opts_knit$set(root.dir = '~/projects/maestria/evaluation/scenarios/')
+library(tidyverse)
+library(ape)
+library(ggtree)
+library(svglite)
+library(wesanderson)
+
+palet <- wes_palette("Darjeeling1")
+colors <- c(palet[2],palet[4])
+```
+
+
+
+**Set up some useful functions**
+```{r}
+labeledTreePlot <- function(x){
+  ggtree(x) +
+  theme_tree2() +
+  geom_label(aes(label=label), fill=palet[5]  ) 
+}
+
+updateTree <- function( tree, node_labels , branch_lenghs ){
+  tbl <- as_tibble(tree)
+  query <- tibble(label=node_labels, branch.length = branch_lengths  )
+  p <- rows_update(tbl, query )
+  return(as.phylo(p))
+}
+
+scaleTree <- function( tree, scaling_factor ){
+  
+  tbl <- as_tibble(tree)
+  query <- tibble(label= tbl$label, branch.length = scaling_factor * tbl$branch.length )
+  p <- rows_update(tbl, query )
+  return(as.phylo(p))
+  
+}
+
+```
+
+## Treelike scenarios
+
+### Hierarchical simple
+
+Simple scenario for very basic calibration and migration scenarios. An example topology follows:
+
+```{r hSimple, fig.cap="Hierarchical simple" }
+tree <- read.tree("trees/simple.nwk")
+
+
+
+ggtree(tree) +
+  theme_tree2() +
+  geom_label(aes(label=label), fill=palet[5]  )
+```
+
+
+
+**Compute theoretical covariance matrix**
+
+
+```{r}
+tbl <- as_tibble(newtree)
+# Get brnach coefficients
+c2 <- tbl %>% filter(label == "p2") %>% pull(branch.length) 
+c3 <- tbl %>% filter(label == "p3") %>% pull(branch.length) 
+c4 <- tbl %>% filter(label == "p4") %>% pull(branch.length) 
+cC <- tbl %>% filter(label == "C") %>% pull(branch.length) 
+
+# Specify populations and population size
+pops <- c("p2","p3","p4")
+popsize <- 1000
+
+# Build matrix
+m <- matrix( c(c2+cC,   cC, 0,
+                  cC,c3+cC, 0,
+                   0,    0, c4 ), byrow = TRUE , nrow = 3  )
+
+rownames(m) <- pops
+# Compute covariance
+Fij <- m * 1/(2*popsize)
+# Write matrix
+write.table(Fij, "covariance/hierarchical_simple.tab",
+            sep =  " ",
+            row.names = TRUE,
+            col.names = FALSE,
+            quote = FALSE)
+
+
+write.tree(newtree, file = "trees/simple.nwk", append = FALSE,
+           digits = 10, tree.names = FALSE)
+```
+
+
+

@@ -15,6 +15,12 @@ outfile = args.outfile
 
 tbl = pd.read_csv(infile, sep = "\s+" , header = 0)
 
+
+# Filter outgroup
+
+keep = tbl["CLST"] != "p1"
+tbl = tbl[keep]
+
 tbl["TMIX"] = tbl["MAC"].astype(str) + "," + (tbl["NCHROBS"] - tbl["MAC"]).astype(str)
 
 tbl["ORDER"] = tbl.index
@@ -26,6 +32,8 @@ tbl = tbl.pivot(columns="CLST", values = "TMIX", index = "SNP")
 tbl = orderDF.join(tbl,on="SNP" )
 
 tbl = tbl.drop('ORDER', axis =  1).drop_duplicates().drop('SNP', axis = 1 )
+
+
 
 tbl.to_csv(outfile, sep =  " " , index = False, compression="gzip")
 

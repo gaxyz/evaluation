@@ -8,3 +8,4 @@ scenarios/images
 *_cache/
 .Rhistory
 *.swp
+simulation-test/

@@ -1,5 +1,5 @@
 process KINSHIP_HAPFLK{                                                       
-    publishDir "${params.outdir}/${scenario}/"                                                                         
+    publishDir "${params.outdir}/${scenario}/" , mode: "move"                                                                  
 
                                                                                 
     cpus 5                                                                      
@@ -23,7 +23,7 @@ process KINSHIP_HAPFLK{
 
 
 process EMPIRICAL_HAPFLK {                                                     
-    publishDir "${params.outdir}/${scenario}/"                                           
+    publishDir "${params.outdir}/${scenario}/", mode: "move"                                           
 
                                                                                 
     cpus 5                                                                      
@@ -54,7 +54,7 @@ process EMPIRICAL_HAPFLK {
 
 
 process TREEMIX_HAPFLK {                                                        
-    publishDir "${params.outdir}/${scenario}/"                                                                                                             
+    publishDir "${params.outdir}/${scenario}/"  , mode: "move"                                                                                               
 
                                                                                 
     cpus 5                                                                      
@@ -99,7 +99,7 @@ process TREEMIX {
             -bootstrap -k ${params.bootstrap}                                   
                                                                                 
                                                                                 
-    prepare-modelcov.py ${rep_id}_${params.edges}.modelcov.gz ${rep_id}_${params.edges}_covariance.tab --outgroup p1
+   
     """                                                                         
                                                                                 
 }                                                                               
