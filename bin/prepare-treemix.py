@@ -16,10 +16,10 @@ outfile = args.outfile
 tbl = pd.read_csv(infile, sep = "\s+" , header = 0)
 
 
-# Filter outgroup
 
-keep = tbl["CLST"] != "p1"
-tbl = tbl[keep]
+
+
+
 
 tbl["TMIX"] = tbl["MAC"].astype(str) + "," + (tbl["NCHROBS"] - tbl["MAC"]).astype(str)
 

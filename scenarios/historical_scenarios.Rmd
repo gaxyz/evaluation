@@ -50,58 +50,69 @@ scaleTree <- function( tree, scaling_factor ){
 
 ```
 
-## Treelike scenarios
-
-### Hierarchical simple
-
-Simple scenario for very basic calibration and migration scenarios. An example topology follows:
-
-```{r hSimple, fig.cap="Hierarchical simple" }
-tree <- read.tree("trees/simple.nwk")
+# Simple scenario
 
 
-
-ggtree(tree) +
-  theme_tree2() +
-  geom_label(aes(label=label), fill=palet[5]  )
-```
-
-
-
-**Compute theoretical covariance matrix**
 
 
 ```{r}
-tbl <- as_tibble(newtree)
-# Get brnach coefficients
-c2 <- tbl %>% filter(label == "p2") %>% pull(branch.length) 
-c3 <- tbl %>% filter(label == "p3") %>% pull(branch.length) 
-c4 <- tbl %>% filter(label == "p4") %>% pull(branch.length) 
-cC <- tbl %>% filter(label == "C") %>% pull(branch.length) 
-
-# Specify populations and population size
-pops <- c("p2","p3","p4")
 popsize <- 1000
+d <- 1/(2*popsize)
+pops <- c("p4","p5","p2", "p3")
 
-# Build matrix
-m <- matrix( c(c2+cC,   cC, 0,
-                  cC,c3+cC, 0,
-                   0,    0, c4 ), byrow = TRUE , nrow = 3  )
 
-rownames(m) <- pops
-# Compute covariance
-Fij <- m * 1/(2*popsize)
-# Write matrix
-write.table(Fij, "covariance/hierarchical_simple.tab",
+c41 <- 1000
+c42 <- 200
+c5  <- 200
+c21 <- 500
+c22 <- 200
+c3  <- 700
+cC  <- 500
+
+w <- 0.2
+```
+
+
+```{r}
+f <- matrix(
+  c( c41 + c42 , w*c41                            ,              0 ,       0,
+     w*c41     , c5 + w*c41 + (1-w)*(c21+cC)      ,          (1-w)*(cC+c21),      cC,
+     0         , (1-w)*(cC + c21)                         , cC + c21 + c22 ,      cC,
+     0         , cC                               , cC             , cC + c3
+  ), nrow = length(pops)
+)
+
+f <- d*f
+
+rownames(f) <- pops
+colnames(f) <- pops
+
+f
+```
+
+
+```{}
+
+write.table(f, "covariance/simple.tab",
             sep =  " ",
             row.names = TRUE,
             col.names = FALSE,
             quote = FALSE)
 
-
-write.tree(newtree, file = "trees/simple.nwk", append = FALSE,
-           digits = 10, tree.names = FALSE)
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

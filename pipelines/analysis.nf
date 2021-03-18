@@ -40,12 +40,12 @@ TREEMIX( TREEMIX_INPUT.out )
 // HAPFLK COMPUTATION--------------------------------------------               
 // Empirical hapFLK                                                             
 /// Compute hapFLK using empricial estimation of kinship matrix              
-KINSHIP_HAPFLK(MAF_FILTER.out)                                                
+//KINSHIP_HAPFLK(MAF_FILTER.out)                                                
 // Theoretical hapFLK                                                           
 /// Compute hapFLK using theoretical covariance matrix                          
 // Covariance hapFLK                                                            
 /// Compute hapFLK using estimated covariance matrix as kinship                 
-EMPIRICAL_HAPFLK( MAF_FILTER.out )                                             
+//EMPIRICAL_HAPFLK( MAF_FILTER.out )                                             
 // Treemix covariance                                                           
 /// Compute hapFLK using treemix estimated covariance matrix                    
 treemix_in = MAF_FILTER.out.join(TREEMIX.out, remainder:true, by: [0,1] )                                                                       

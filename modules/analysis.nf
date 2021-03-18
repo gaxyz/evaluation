@@ -95,10 +95,10 @@ process TREEMIX {
     treemix -i ${countfile} \
             -m ${params.edges} \
             -o ${rep_id}_${params.edges}  \
-            -root p1 \
             -bootstrap -k ${params.bootstrap}                                   
                                                                                 
-                                                                                
+    prepare-modelcov.py ${rep_id}_${params.edges}.modelcov.gz ${rep_id}_${params.edges}_covariance.tab 
+    
    
     """                                                                         
                                                                                 
