@@ -1,6 +1,6 @@
 initialize(){
 
-    initializeMutationRate(1e-6);
+    initializeMutationRate(1e-5);
     initializeRecombinationRate(1e-8);
     initializeMutationType("m1",0.5,"f",0.0); // Neutral
     initializeMutationType("m2",0.5,"f",0.0); // Neutral until fitness is modified
@@ -201,7 +201,7 @@ initialize(){
 }
 
 // End simulation and save genotypes
-2800 late() {
+2650 late() {
 	p1.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p1.vcf" );
 	p2.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p2.vcf" );
 	p3.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p3.vcf" );
