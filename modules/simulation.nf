@@ -2,7 +2,7 @@ process SIMULATE{
                                        
 
     publishDir "${params.outdir}/${params.scenario}-s${s}-m${m}-cond${params.conditioned_frequency}-${params.sampling_scheme}-${params.ne_variation}"   , pattern:"frequencies_*.mut" , mode: "move"                                         
-                                                                                
+    scratch true                                                                                
     cpus 1          
 
     input:                                                                      
