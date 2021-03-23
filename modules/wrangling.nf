@@ -8,7 +8,7 @@ process PREPROCESS {
         tuple val(rep_id), val(s), val(m), file(vcfs)
     output:                                                                     
         tuple val(rep_id), file("genotypes_${rep_id}.bed"), file("genotypes_${rep_id}.fam"),file("genotypes_${rep_id}.bim")
-        tuple val(rep_id), file("parameters_${rep_id}_${m}_${s}.csv")                      
+        
                                                                                 
    
     
@@ -20,18 +20,6 @@ process PREPROCESS {
     mv genotypes_${rep_id}.bim geno.bim                                         
                                                                                 
     plink --bfile geno --maf 0.1 --nonfounders --make-bed --out genotypes_${rep_id}    
-
-    generate-parameter-file.py \
-                    --replicate ${rep_id} \
-                    --s ${s} \
-                    --m ${m} \
-                    --cond_freq ${params.conditioned_frequency} \
-                    --N ${params.N} \
-                    --sample_size ${params.sample_size} \
-                    --sampling ${params.sampling_scheme} \
-                    --ne_variation ${params.ne_variation} \
-                    --out parameters_${rep_id}_${m}_${s}.csv
-                                            
     """    
 
 }
@@ -122,6 +110,25 @@ process MAF_FILTER {
 
 
 
+process COLLECT_FREQUENCIES {
+
+    publishDir "${params.outdir}"   , pattern:"frequencies_*.tsv" , mode: "move"
+    
+    cpus 1
+
+    input:
+        file(freqfile)
+    output:
+        file("frequencies_*.tsv")
+
+    """
+    collect-frequencies.py . --out frequencies_${params.scenario}.tsv
+    """           
+ 
+
+
+
+}
 
 
 

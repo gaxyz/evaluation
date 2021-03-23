@@ -3,7 +3,7 @@ nextflow.preview.dsl=2
 workflow {                                                                      
                    
 include {SIMULATE} from "../modules/simulation"
-include {PREPROCESS; COLLECT_PARAMETERS} from "../modules/wrangling"
+include {PREPROCESS; COLLECT_FREQUENCIES} from "../modules/wrangling"
 
 
 
@@ -38,20 +38,18 @@ pars = rep_id.combine(s).combine(m)
 
 // SIMULATION-------------------                                                                               
 SIMULATE( slim_script, pars  )                                                
-vcf = SIMULATE.out                                                         
+vcf = SIMULATE.out[0]                                                         
+freqfile = SIMULATE.out[1]
 
 // PREPROCESS
 
 PREPROCESS( vcf ) 
 parameter_data = PREPROCESS.out[1]
 
-// COLLECT PARAMETER DATA
+// COLLECT FREQUENCY DATA
 //
-COLLECT_PARAMETERS( parameter_data.collect() )
 
-
-
-
+COLLECT_FREQUENCIES( freqfile.collect() )
 
 
 

@@ -1,7 +1,4 @@
-process SIMULATE{                                                               
-                                       
-
-    publishDir "${params.outdir}/${params.scenario}-s${s}-m${m}-cond${params.conditioned_frequency}-${params.sampling_scheme}-${params.ne_variation}"   , pattern:"frequencies_*.mut" , mode: "move"                                         
+process SIMULATE{                                                                
     scratch true                                                                                
     cpus 1          
 
@@ -10,7 +7,7 @@ process SIMULATE{
         tuple val(rep_id), val(s), val(m)                                                             
     output:                                                                     
         tuple val(rep_id), val(s), val(m) , file("*.vcf")                         
-        
+        file("frequencies_*.mut")    
                                                                                 
     """                                                                         
     slim -d s=${s} \
@@ -21,7 +18,11 @@ process SIMULATE{
         -d sample_size=${params.sample_size} \
         ${slim_script}
     
-    aggregate-frequencies.py . frequencies_${rep_id}.mut         
+    aggregate-frequencies.py . frequencies_${rep_id}_s${s}_m${m}.mut \
+                                --rep_id ${rep_id} \
+                                --m ${m} \
+                                --s ${s}
+         
     """                                                                         
                                                                                 
 }                                                                               
