@@ -75,7 +75,32 @@ process TREEMIX_HAPFLK {
             --nfit ${params.nfit} \
             --kinship ${covariance}                                             
     """                                                                         
-}                                                                               
+}                                                                              
+
+process THEORETICAL_HAPFLK{                                                     
+                                                                                
+    scratch true                                                                
+                                                                                
+    cpus 5                                                                      
+                                                                                
+    input:                                                                      
+        tuple val(rep_id), file(bed), file(fam), file(bim)                      
+        file(covariance)                                                        
+    output:                                                                     
+        tuple val(rep_id) , file("*.flk"), file("*.hapflk")                     
+                                                                                
+    """                                                                         
+    hapflk --ncpu ${task.cpus} \
+            --reynolds-snps ${params.reynold_snps} \
+            --bfile genotypes_${rep_id} \
+            --prefix theoretical_calibration_${rep_id} \
+            --outgroup p1 \
+            -K ${params.K} \
+            --nfit ${params.nfit} \
+            --kinship ${covariance}                                             
+    """                                                                         
+                                                                                
+}       
               
 
 

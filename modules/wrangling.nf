@@ -57,7 +57,7 @@ process AGGREGATE{
 
                                                                                 
     output:                                                                     
-        file("*.tab")                                                           
+        file("*.tab.gz")                                                           
                                                                                 
                                                                                 
     """                                                                         

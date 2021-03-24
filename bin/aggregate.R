@@ -70,7 +70,7 @@ final_tbl <- full_join(flk,
                        by = c("rs", "replicate", "covariance","chr","pos") )
 
 # Write statistics file
-statistics_file = paste0(scenario,"_statistics.tab")
+statistics_file = paste0(scenario,"_statistics.tab.gz")
 write_delim(final_tbl,
             path = statistics_file,
             delim = " ",
