@@ -84,7 +84,7 @@ process THEORETICAL_HAPFLK{
     cpus 5                                                                      
                                                                                 
     input:                                                                      
-        tuple val(rep_id), file(bed), file(fam), file(bim)                      
+        tuple val(scenario), val(rep_id) , file(bed), file(bim), file(fam) 
         file(covariance)                                                        
     output:                                                                     
         tuple val(rep_id) , file("*.flk"), file("*.hapflk")                     
