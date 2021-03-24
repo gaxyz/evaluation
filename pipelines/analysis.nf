@@ -10,7 +10,7 @@ include {TREEMIX_INPUT; MAF_FILTER; AGGREGATE } from "../modules/wrangling"
 
 /// Read config file parameters    
 data_dir=params.data_dir                            /// data folder
-covariance=params.covariance                /// theoretical covariance                                        
+covariance=file(params.covariance)                /// theoretical covariance                                        
 K=params.K                                  /// K for fasPHASE                  
 reynold_snps=params.reynold_snps            /// Snps for tree estimation        
 nfit=params.nfit                            /// Number of fits to average from (hapFLK)
