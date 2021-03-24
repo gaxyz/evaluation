@@ -50,8 +50,9 @@ process AGGREGATE{
                                                                                 
                                                                                 
     input:                                                                      
-        file(empirical)                                                          
-        file(covariance)                                                        
+        file(kinship)                                                          
+        file(theoretical)                                                        
+        file(empirical)
         file(treemix)                                                           
 
                                                                                 
