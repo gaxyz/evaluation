@@ -6,7 +6,7 @@ workflow {
 ////////////////////////////////////                                            
 // Include modules       
 include {KINSHIP_HAPFLK; EMPIRICAL_HAPFLK; THEORETICAL_HAPFLK; TREEMIX_HAPFLK; TREEMIX} from "../modules/analysis"
-include {TREEMIX_INPUT; MAF_FILTER } from "../modules/wrangling"
+include {TREEMIX_INPUT; MAF_FILTER; AGGREGATE } from "../modules/wrangling"
 
 /// Read config file parameters    
 data_dir=params.data_dir                            /// data folder
