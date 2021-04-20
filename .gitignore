@@ -1,4 +1,5 @@
 complex
+data
 test
 test1
 analysis/past_calibrations
@@ -9,3 +10,4 @@ scenarios/images
 .Rhistory
 *.swp
 simulation-test/
+simple
