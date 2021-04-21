@@ -92,7 +92,7 @@ process THEORETICAL_HAPFLK{
     hapflk --ncpu ${task.cpus} \
             --reynolds-snps ${params.reynold_snps} \
             --bfile genotypes_${rep_id} \
-            --prefix theoretical_calibration_${rep_id} \
+            --prefix theoretical_${rep_id} \
             --outgroup p1 \
             -K ${params.K} \
             --nfit ${params.nfit} \
