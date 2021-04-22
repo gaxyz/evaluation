@@ -45,7 +45,7 @@ for (i in 1:length(flk_files )){
   basename = strsplit(filename , "\\.")[[1]][1]
   
   covariance = strsplit(basename, "_")[[1]][1]
-  replicate = strsplit(basename, "_")[[1]][3]
+  replicate = strsplit(basename, "_")[[1]][2]
   # initialize tibble
   if  ( i == 1 ){
     
