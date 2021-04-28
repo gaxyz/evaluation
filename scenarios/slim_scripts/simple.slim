@@ -1,3 +1,4 @@
+/// This script has Ne rescaling for variability generation
 initialize(){
 
     initializeMutationRate(1e-7);
@@ -6,32 +7,34 @@ initialize(){
     initializeMutationType("m2",0.5,"f",0.0); // Neutral until fitness is modified
     m2.color = "red";
     initializeGenomicElementType("g1",m1,1.0);
-
-     // Chromosomes
-    initializeGenomicElement(g1, 0, 10*999999);
+    // Chromosomes
+    initializeGenomicElement(g1, 0, 1*999999);
 
 }
 /// 
 1 {
 	 // Inputtable constants
-	 
-    //defineConstant("neutral",F);
-    //defineConstant("s",0.5);
-    //defineConstant("m",0);
-    //defineConstant("condfreq",0.2);
+    //defineConstant("s",0.1);
+    //defineConstant("m",0.2);
+    //defineConstant("condfreq",0.3);
     //defineConstant("rep_id", "1");
 	 //defineConstant("N",1000);
 	 //defineConstant("sample_size",50);
     
     // Other constants
-    defineConstant("N",1000) ;
-    defineConstant("m2_site", 10*499999 );
-    defineConstant("sample_size", 50 );
+    defineConstant("m2_site", 1*499999 );
     // Save run identifier
     defineConstant("simID",getSeed());
-
     // Add first population 
     sim.addSubpop("p1",N);
+    
+	 // Write header for frequencies
+	 writeFile("p1.mut", "generation p1" );    
+	 writeFile("p2.mut", "generation p2" );
+    writeFile("p3.mut", "generation p3" );
+    writeFile("p4.mut", "generation p4" );
+    writeFile("p5.mut", "generation p5" );
+    
 }
 
 // Add m2 mutations and save
@@ -46,20 +49,20 @@ initialize(){
 
 // Wait and check for establishment
 
-10000:10099 late() {
+10000:10100 late() {
 
     mut = sim.mutationsOfType( m2 ) ;
     if ( size(mut) == 1 )
     {
         if (sim.mutationFrequencies(NULL,mut) > condfreq )
         {
-            cat( simID + ": ESTABLISHED -- PROCEEDING WITH SPLIT\n" ) ;
+            cat( getSeed() + ": ESTABLISHED -- PROCEEDING WITH SPLIT\n" ) ;
             sim.deregisterScriptBlock(self);
         }
     }
     else
     {
-            cat(simID + " GENERATION: "+ sim.generation +": LOST BEFORE ESTABLISHMENT -- RESTARTING \n");
+            cat(getSeed() + " GENERATION: "+ sim.generation +": LOST BEFORE ESTABLISHMENT -- RESTARTING \n");
             // back to saved gen
             sim.readFromPopulationFile( "./slim_" + simID + ".txt" );
             // start newly seeded run
@@ -73,7 +76,7 @@ initialize(){
 
 // Supress m1 mutation generation
 
-10100: mutation(m1) {
+10099: mutation(m1) {
     return F;
 }
 10099 late() {
@@ -85,35 +88,50 @@ initialize(){
 10100  {
     sim.addSubpopSplit("p2", N , p1 );
 }
-// Start writing m2 frequencies
+/// save state
+10100 late() {sim.outputFull("./slim_" + simID + ".txt");}
+
+
+// p1, p2 write m2 frequencies
 10100: late() {
-     mut = sim.mutationsOfType(m2);
-     freq = sim.mutationFrequencies(p2,mut);
-     writeFile("m2_frequencies_" + rep_id + ".tab", sim.generation + " " + freq, append = T );
+	 mut = sim.mutationsOfType(m2);
+	 freq = sim.mutationFrequencies(p2,mut);
+    writeFile("p2.mut", sim.generation + " " + freq, append = T ); 
+
+	 freq = sim.mutationFrequencies(p1,mut);
+    writeFile("p1.mut", sim.generation + " " + freq, append = T ); 
 }
 
 //// RESTART SIMULATION IF MUTATION IS LOST ////
 
-10100:11700 late() {
+10100:12800 late() {
     mut = sim.mutationsOfType( m2 ) ;
-	 // Store value if mutation is lost. If clause is b/c if m2 is completely lost, it fucks up code
+	// Store value if mutation is lost. If clause is b/c if m2 is completely lost, it fucks up code
     lost = sim.mutationFrequencies(p2,mut) < 1/(2*N);
-    if ( size(lost) == 0 ){
-    	cat("m2 LOST IN ALL POPS\n");
-    	lost = T;
-    	}
-
     // Only control for selection scenario
     if ( s > 0.0 ){
-      if ( lost ) {
-                 /// m2 LOST, STOP SIMULATION 
-          		  cat("m2 LOST: RESTARTING\n");
-             	  // back to saved gen
-            		  sim.readFromPopulationFile( "./slim_" + simID + ".txt" );
-         		     // start newly seeded run
-      		        setSeed( rdunif(1,0,asInteger(2^62) - 1 ));
+    	if ( size(lost) == 0 ){
+    		cat(getSeed() + " GENERATION "+ sim.generation + ": m2 LOST IN ALL POPS: RESTARTING\n");
+
+    		lost = T;
+    		}
+
+    	if ( lost ) {
+      	         /// m2 LOST, STOP SIMULATION 
+         	 		cat(getSeed()+ " GENERATION "+sim.generation+": m2 LOST: RESTARTING\n");
+						/// Rewrite frequency files
+				  		writeFile("p1.mut", "generation p1" );    
+					  	writeFile("p2.mut", "generation p2" );
+    				  	writeFile("p3.mut", "generation p3" );
+    				  	writeFile("p4.mut", "generation p4" );
+    				  	writeFile("p5.mut", "generation p5" );
+             	  	// back to saved gen
+            	  	sim.readFromPopulationFile( "./slim_" + simID + ".txt" );
+         		  	// start newly seeded run
+      		     	setSeed( rdunif(1,0,asInteger(2^62) - 1 ));
               
     	}
+    
     }
 }
 ////////////////////////////////////////////
@@ -123,44 +141,76 @@ initialize(){
 10600 {
     sim.addSubpopSplit("p4", N , p2 );
 }
+/// save state
+10600 late() {sim.outputFull("./slim_" + simID + ".txt");}
+
+
+// p4 write m2 frequencies
+10600: late() {
+	 mut = sim.mutationsOfType(m2);
+	 freq = sim.mutationFrequencies(p4,mut);
+    writeFile("p4.mut", sim.generation + " " + freq, append = T ); 
+}
 
 // Third split(s)
 
-11100 {
-    sim.addSubpopSplit("p3",N,p2); 
-}
-
-// Fourth split
-
-11600 {
+12100 {
     sim.addSubpopSplit("p3",N,p2);
 }
+
+/// save state
+12100 late() {sim.outputFull("./slim_" + simID + ".txt");}
+
+
+12100: late() {
+	 mut = sim.mutationsOfType(m2);
+	 freq = sim.mutationFrequencies(p3,mut);
+    writeFile("p3.mut", sim.generation + " " + freq, append = T ); 
+}
+
 
 
 // Admixture event
 
-11200 {
-
+12600 {
 	sim.addSubpopSplit("p5",N,p2);
 	p5.setMigrationRates(p4,m);
+}
 
+/// Cut migration
+12601 {
+    p5.setMigrationRates(p4,0);	
+}
+
+/// save state
+12600 late() {sim.outputFull("./slim_" + simID + ".txt");}
+
+
+/// p5 write frequencies
+12600: late() {
+	 mut = sim.mutationsOfType(m2);
+	 freq = sim.mutationFrequencies(p5,mut);
+    writeFile("p5.mut", sim.generation + " " + freq, append = T ); 
 }
 
 // Modify fitness in admixed population
-11200: fitness(m2, p5){
+12600: fitness(m2, p5){
 
         return 1.0 + s ; //
+       
 
 }
 
 // End simulation and save genotypes
-11300 late() {
+12650 late() {
 	p1.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p1.vcf" );
 	p2.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p2.vcf" );
 	p3.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p3.vcf" );
 	p4.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p4.vcf" );
 	p5.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p5.vcf" );
-	sim.simulationFinished();
+
+
+   sim.simulationFinished();
 
 }
 

@@ -1,0 +1,166 @@
+initialize(){
+
+    initializeMutationRate(1e-7);
+    initializeRecombinationRate(1e-7);
+    initializeMutationType("m1",0.5,"f",0.0); // Neutral
+    initializeMutationType("m2",0.5,"f",0.0); // Neutral until fitness is modified
+    m2.color = "red";
+    initializeGenomicElementType("g1",m1,1.0);
+
+     // Chromosomes
+    initializeGenomicElement(g1, 0, 10*999999);
+
+}
+/// 
+1 {
+	 // Inputtable constants
+	 
+    //defineConstant("neutral",F);
+    //defineConstant("s",0.5);
+    //defineConstant("m",0);
+    //defineConstant("condfreq",0.2);
+    //defineConstant("rep_id", "1");
+	 //defineConstant("N",1000);
+	 //defineConstant("sample_size",50);
+    
+    // Other constants
+    defineConstant("N",1000) ;
+    defineConstant("m2_site", 10*499999 );
+    defineConstant("sample_size", 50 );
+    // Save run identifier
+    defineConstant("simID",getSeed());
+
+    // Add first population 
+    sim.addSubpop("p1",N);
+}
+
+// Add m2 mutations and save
+10000 late() {
+    // save state
+    sim.outputFull("./slim_" + simID + ".txt");
+    // introduce m2
+    target = sample(p1.genomes,1);
+    target.addNewDrawnMutation(m2,m2_site);
+}
+
+
+// Wait and check for establishment
+
+10000:10099 late() {
+
+    mut = sim.mutationsOfType( m2 ) ;
+    if ( size(mut) == 1 )
+    {
+        if (sim.mutationFrequencies(NULL,mut) > condfreq )
+        {
+            cat( simID + ": ESTABLISHED -- PROCEEDING WITH SPLIT\n" ) ;
+            sim.deregisterScriptBlock(self);
+        }
+    }
+    else
+    {
+            cat(simID + " GENERATION: "+ sim.generation +": LOST BEFORE ESTABLISHMENT -- RESTARTING \n");
+            // back to saved gen
+            sim.readFromPopulationFile( "./slim_" + simID + ".txt" );
+            // start newly seeded run
+            setSeed( rdunif(1,0,asInteger(2^62) - 1 ));
+
+            // re introduce mutation
+            target = sample( p1.genomes, 1 );
+            target.addNewDrawnMutation( m2, m2_site );
+    }
+}
+
+// Supress m1 mutation generation
+
+10100: mutation(m1) {
+    return F;
+}
+10099 late() {
+     // Save state for establishment checking
+     sim.outputFull("./slim_" + simID + ".txt");
+}
+
+// First split
+10100  {
+    sim.addSubpopSplit("p2", N , p1 );
+}
+// Start writing m2 frequencies
+10100: late() {
+     mut = sim.mutationsOfType(m2);
+     freq = sim.mutationFrequencies(p2,mut);
+     writeFile("m2_frequencies_" + rep_id + ".tab", sim.generation + " " + freq, append = T );
+}
+
+//// RESTART SIMULATION IF MUTATION IS LOST ////
+
+10100:11700 late() {
+    mut = sim.mutationsOfType( m2 ) ;
+	 // Store value if mutation is lost. If clause is b/c if m2 is completely lost, it fucks up code
+    lost = sim.mutationFrequencies(p2,mut) < 1/(2*N);
+    if ( size(lost) == 0 ){
+    	cat("m2 LOST IN ALL POPS\n");
+    	lost = T;
+    	}
+
+    // Only control for selection scenario
+    if ( s > 0.0 ){
+      if ( lost ) {
+                 /// m2 LOST, STOP SIMULATION 
+          		  cat("m2 LOST: RESTARTING\n");
+             	  // back to saved gen
+            		  sim.readFromPopulationFile( "./slim_" + simID + ".txt" );
+         		     // start newly seeded run
+      		        setSeed( rdunif(1,0,asInteger(2^62) - 1 ));
+              
+    	}
+    }
+}
+////////////////////////////////////////////
+
+
+// Second split
+10600 {
+    sim.addSubpopSplit("p4", N , p2 );
+}
+
+// Third split(s)
+
+11100 {
+    sim.addSubpopSplit("p3",N,p2); 
+}
+
+// Fourth split
+
+11600 {
+    sim.addSubpopSplit("p3",N,p2);
+}
+
+
+// Admixture event
+
+11200 {
+
+	sim.addSubpopSplit("p5",N,p2);
+	p5.setMigrationRates(p4,m);
+
+}
+
+// Modify fitness in admixed population
+11200: fitness(m2, p5){
+
+        return 1.0 + s ; //
+
+}
+
+// End simulation and save genotypes
+11300 late() {
+	p1.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p1.vcf" );
+	p2.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p2.vcf" );
+	p3.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p3.vcf" );
+	p4.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p4.vcf" );
+	p5.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p5.vcf" );
+	sim.simulationFinished();
+
+}
+
