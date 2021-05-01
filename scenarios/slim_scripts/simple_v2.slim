@@ -38,7 +38,7 @@ initialize(){
 }
 
 // Add m2 mutations and save
-5000 late() {
+10000 late() {
     // save state
     sim.outputFull("./slim_" + simID + ".txt");
     // introduce m2
@@ -49,7 +49,7 @@ initialize(){
 
 // Wait and check for establishment
 
-5000:5100 late() {
+10000:10100 late() {
 
     mut = sim.mutationsOfType( m2 ) ;
     if ( size(mut) == 1 )
@@ -76,24 +76,24 @@ initialize(){
 
 // Supress m1 mutation generation
 
-5099: mutation(m1) {
+10099: mutation(m1) {
     return F;
 }
-5099 late() {
+10099 late() {
      // Save state for establishment checking
      sim.outputFull("./slim_" + simID + ".txt");
 }
 
 // First split
-5100  {
+10100  {
     sim.addSubpopSplit("p2", N , p1 );
 }
 /// save state
-5100 late() {sim.outputFull("./slim_" + simID + ".txt");}
+10100 late() {sim.outputFull("./slim_" + simID + ".txt");}
 
 
 // p1, p2 write m2 frequencies
-5100: late() {
+10100: late() {
 	 mut = sim.mutationsOfType(m2);
 	 freq = sim.mutationFrequencies(p2,mut);
     writeFile("p2.mut", sim.generation + " " + freq, append = T ); 
@@ -104,7 +104,7 @@ initialize(){
 
 //// RESTART SIMULATION IF MUTATION IS LOST ////
 
-5100:7800 late() {
+10100:10800 late() {
     mut = sim.mutationsOfType( m2 ) ;
 	// Store value if mutation is lost. If clause is b/c if m2 is completely lost, it fucks up code
     lost = sim.mutationFrequencies(p2,mut) < 1/(2*N);
@@ -138,15 +138,15 @@ initialize(){
 
 
 // Second split
-5600 {
+10600 {
     sim.addSubpopSplit("p4", N , p2 );
 }
 /// save state
-5600 late() {sim.outputFull("./slim_" + simID + ".txt");}
+10600 late() {sim.outputFull("./slim_" + simID + ".txt");}
 
 
 // p4 write m2 frequencies
-5600: late() {
+10600: late() {
 	 mut = sim.mutationsOfType(m2);
 	 freq = sim.mutationFrequencies(p4,mut);
     writeFile("p4.mut", sim.generation + " " + freq, append = T ); 
@@ -154,15 +154,15 @@ initialize(){
 
 // Third split(s)
 
-7100 {
+12100 {
     sim.addSubpopSplit("p3",N,p2);
 }
 
 /// save state
-7100 late() {sim.outputFull("./slim_" + simID + ".txt");}
+12100 late() {sim.outputFull("./slim_" + simID + ".txt");}
 
 
-7100: late() {
+12100: late() {
 	 mut = sim.mutationsOfType(m2);
 	 freq = sim.mutationFrequencies(p3,mut);
     writeFile("p3.mut", sim.generation + " " + freq, append = T ); 
@@ -172,29 +172,29 @@ initialize(){
 
 // Admixture event
 
-7600 {
+12600 {
 	sim.addSubpopSplit("p5",N,p2);
 	p5.setMigrationRates(p4,m);
 }
 
 /// Cut migration
-7601 {
+12601 {
     p5.setMigrationRates(p4,0);	
 }
 
 /// save state
-7600 late() {sim.outputFull("./slim_" + simID + ".txt");}
+12600 late() {sim.outputFull("./slim_" + simID + ".txt");}
 
 
 /// p5 write frequencies
-7600: late() {
+12600: late() {
 	 mut = sim.mutationsOfType(m2);
 	 freq = sim.mutationFrequencies(p5,mut);
     writeFile("p5.mut", sim.generation + " " + freq, append = T ); 
 }
 
 // Modify fitness in admixed population
-7600: fitness(m2, p5){
+12600: fitness(m2, p5){
 
         return 1.0 + s ; //
        
@@ -202,7 +202,7 @@ initialize(){
 }
 
 // End simulation and save genotypes
-7650 late() {
+12650 late() {
 	p1.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p1.vcf" );
 	p2.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p2.vcf" );
 	p3.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p3.vcf" );
