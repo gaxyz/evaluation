@@ -104,7 +104,7 @@ initialize(){
 
 //// RESTART SIMULATION IF MUTATION IS LOST ////
 
-5100:5800 late() {
+5100:7600 late() {
     mut = sim.mutationsOfType( m2 ) ;
 	// Store value if mutation is lost. If clause is b/c if m2 is completely lost, it fucks up code
     lost = sim.mutationFrequencies(p2,mut) < 1/(2*N);
@@ -202,7 +202,7 @@ initialize(){
 }
 
 // End simulation and save genotypes
-7650 late() {
+7700 late() {
 	p1.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p1.vcf" );
 	p2.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p2.vcf" );
 	p3.outputVCFSample(sampleSize = sample_size,replace = F,outputMultiallelics = F,filePath ="p3.vcf" );
