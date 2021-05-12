@@ -3,7 +3,7 @@ data
 test
 test1
 analysis/past_calibrations
-scenarios/images
+
 *.html
 *_files/
 *_cache/
