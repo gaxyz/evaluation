@@ -11,10 +11,10 @@ c22 <- 100
 c3  <- 600
 cC  <- 500
 
-w <- 0.7
+w <- 0.3
 f <- matrix(
   c( c41 + c42 , w*c41                            ,              0 ,       0,
-     w*c41     , c5 + w*c41 + (1-w)*(c21+cC)      ,          (1-w)*(cC+c21),      cC,
+     w*c41     , c5 + c41*w^2 + (c21+cC)*(1-w)^2      ,          (1-w)*(cC+c21),      cC,
      0         , (1-w)*(cC + c21)                         , cC + c21 + c22 ,      cC,
      0         , cC                               , cC             , cC + c3
   ), nrow = length(pops)
@@ -24,9 +24,9 @@ f <- d*f
 
 rownames(f) <- pops
 colnames(f) <- pops
-
+print(paste0("Writing matrix for w=", w))
 f
-write.table(f, "simple_w070.tab",
+write.table(f, "simple_w030.tab",
             sep =  " ",
             row.names = TRUE,
             col.names = FALSE,
