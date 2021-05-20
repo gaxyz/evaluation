@@ -9,7 +9,7 @@ parser.add_argument("scenario", type=str, help="Scenario for output filename")
 args = parser.parse_args()
 hapflk_files = glob.glob(args.directory + "/" + "*.hapflk")
 flk_files = glob.glob(args.directory + "/" + "*.flk")
-scenario = args.scenario
+scenario = args.scenario.replace("/","")
 
 # process hapflk files
 with gzip.open(scenario+"_hapflk.tab.gz", "wb") as outfile:
@@ -29,7 +29,7 @@ with gzip.open(scenario+"_flk.tab.gz","wb") as outfile:
     outfile.write("rs chr pos pzero flk pvalue covariance replicate\n".encode())
     for f in hapflk_files:
         filename = f
-        basename = filename.split(".")[0] 
+        basename = filename.split(".")[-2] 
         covariance = basename.split("_")[0].replace("/","")
         replicate = basename.split("_")[1]
         with open(f, 'r') as handle:
