@@ -61,7 +61,7 @@ process AGGREGATE{
                                                                                 
                                                                                 
     """                                                                         
-    aggregate.R ${params.scenario}                                              
+    aggregate.py . ${params.scenario}                                              
     """                                                                         
                                                                                 
 }                                                                               
