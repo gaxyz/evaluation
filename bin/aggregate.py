@@ -34,7 +34,7 @@ print("Done!\n")
 # process flk files
 with gzip.open(scenario+"_flk.tab.gz","wb") as outfile:
     outfile.write("rs chr pos pzero flk pvalue covariance replicate\n".encode())
-    with Bar("Processing hapFLK files", max=len(hapflk_files)) as bar:
+    with Bar("Processing FLK files", max=len(hapflk_files)) as bar:
         for f in hapflk_files:
             filename = f
             basename = filename.split(".")[-2]
